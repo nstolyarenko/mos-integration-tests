@@ -36,8 +36,8 @@ logger = logging.getLogger(__name__)
 
 
 # Define pytest plugins to use
-pytest_plugins = ("mos_tests.plugins.incremental",
-                  "mos_tests.plugins.testrail_id")
+pytest_plugins = ("plugins.incremental",
+                  "plugins.testrail_id")
 
 
 def pytest_addoption(parser):
@@ -137,7 +137,6 @@ def reinit_fixtures(request):
         except Exception:
             continue
         fixturedef.cached_result = None
-        fixturedef.execute(request)
 
 
 @pytest.yield_fixture(autouse=True)
@@ -218,6 +217,7 @@ def env(request, fuel):
             raise Exception(
                 "Can't find fuel cluster with name in {}".format(names))
         env = envs[0]
+    assert env.is_operational
     if getattr(request.session, 'reverted', True):
         env.wait_for_ostf_pass()
         wait(env.os_conn.is_nova_ready,
