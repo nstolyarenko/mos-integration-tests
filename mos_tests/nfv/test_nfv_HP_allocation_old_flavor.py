@@ -57,22 +57,17 @@ class TestHugePages(TestBaseNFV):
             name='vm1', flavor=nfv_flavor[0].id, key_name=keypair.name,
             nics=[{'net-id': networks[0]}],
             availability_zone='nova:{}'.format(hosts[0]),
-            security_groups=[security_group.id],
-            block_device_mapping={'vda': volume.id})
-        import pdb
-        pdb.set_trace()
+            security_groups=[security_group.id])
         vm_1 = os_conn.create_server(
             name='vm2', flavor=nfv_flavor[0].id, key_name=keypair.name,
             availability_zone='nova:{}'.format(hosts[1]),
             security_groups=[security_group.id],
             nics=[{'net-id': networks[1]}])
-        volume_vm = self.create_volume_from_vm(os_conn, vm_1)
         vm_2 = os_conn.create_server(
             name='vm3', flavor=nfv_flavor[0].id, key_name=keypair.name,
             nics=[{'net-id': networks[1]}],
             availability_zone='nova:{}'.format(hosts[1]),
-            security_groups=[security_group.id],
-            block_device_mapping={'vda': volume_vm})
+            security_groups=[security_group.id])
         vms = [vm_0, vm_1, vm_2]
 
         self.check_pages(os_conn, hosts[0], total_pages=1024, free_pages=768)
